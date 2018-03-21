@@ -28,27 +28,23 @@ RUN conda env create -f /environment.yml
 ENV PATH /opt/conda/envs/assembly-env/bin:$PATH
 
 
-# Install container-wide requrements gcc, pip, zlib, libssl, make, libncurses, fortran77, g++, R
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
-        g++ \
-        gcc \
-        gfortran \
-        libbz2-dev \
-        libcurl4-openssl-dev \
-        libgsl-dev \
-        libgsl2 \
-        liblzma-dev \
-        libncurses5-dev \
-        libpcre3-dev \
-        libreadline-dev \
-        libssl-dev \
-        make \
-        zlib1g-dev \
-        liblzo2-dev \
-&& rm -rf /var/lib/apt/lists/*
+## Install container-wide requrements gcc, pip, zlib, libssl, make, libncurses, fortran77, g++, R
+#RUN apt-get update && \
+#    apt-get install -y --no-install-recommends \
+#        g++ \
+#        gcc \
+#        gfortran \
+#        libbz2-dev \
+#        libcurl4-openssl-dev \
+#        libgsl-dev \
+#        libgsl2 \
+#        liblzma-dev \
+#        libncurses5-dev \
+#        libpcre3-dev \
+#        libreadline-dev \
+#        libssl-dev \
+#        make \
+#        zlib1g-dev \
+#        liblzo2-dev \
+#&& rm -rf /var/lib/apt/lists/*
 
-# Install SPAdes
-RUN curl -fsSL http://cab.spbu.ru/files/release3.11.1/SPAdes-3.11.1-Darwin.tar.gz -o /opt/SPAdes-3.11.1-Darwin.tar.gz && \
-    tar -zxf /opt/SPAdes-3.11.1-Darwin.tar.gz -C /opt/
-ENV PATH $PATH:/opt/SPAdes-3.11.1-Darwin/bin/
