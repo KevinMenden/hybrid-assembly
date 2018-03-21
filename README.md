@@ -1,6 +1,8 @@
 # hybrid-assembly
 Pipeline for hybrid assembly using short and long reads.
 
+# UNDER DEVELOPMENT
+
 [![Build Status](https://travis-ci.org/kevinmenden/hybrid-assembly.svg?branch=master)](https://travis-ci.org/kevinmenden/hybrid-assembly)
 [![Nextflow](https://img.shields.io/badge/nextflow-%E2%89%A50.27.0-brightgreen.svg)](https://www.nextflow.io/)
 
