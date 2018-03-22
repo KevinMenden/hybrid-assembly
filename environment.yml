@@ -13,6 +13,7 @@ dependencies:
   - bwa=0.7.17=pl5.22.0_2
   - canu=1.7=pl5.22.0_0
   - coreutils=8.25=1
+  - fastqc=0.11.7=pl5.22.0_0
   - hmmer=3.1b2=3
   - minimap2=2.9=1
   - mmtf-python=1.0.2=py27_0
@@ -51,6 +52,7 @@ dependencies:
   - cycler=0.10.0=py27hc7354d3_0
   - eigen=3.3.3=h5721d7b_0
   - expat=2.2.5=he0dffb1_0
+  - font-ttf-dejavu-sans-mono=2.37=h6964260_0
   - fontconfig=2.12.6=h49f89f6_0
   - functools32=3.2.3.2=py27h4ead58f_1
   - futures=3.2.0=py27h7b459c0_0

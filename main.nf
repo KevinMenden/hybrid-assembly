@@ -21,15 +21,13 @@ def helpMessage() {
 
     The typical command for running the pipeline is as follows:
 
-    nextflow run kevinmenden/hybrid-assembly --reads '*_R{1,2}.fastq.gz' -profile docker
+    nextflow run kevinmenden/hybrid-assembly --shortReads '*_R{1,2}.fastq.gz' --longReads 'nano_reads.fastq.gz' --assembler spades  -profile docker
 
     Mandatory arguments:
-      --reads                       Path to input data (must be surrounded with quotes)
-      --genome                      Name of iGenomes reference
+      --assembler                   The assembler pipeline to choose. One of 'spades' | 'canu' | 'masurca'
+      --shortReads                  The paired short reads
+      --longReads                   The long reads
       -profile                      Hardware config to use. docker / aws
-
-    Options:
-      --singleEnd                   Specifies that the input is single end reads
 
     References                      If not specified in the configuration file or you wish to overwrite any of the references.
       --fasta                       Path to Fasta reference
@@ -54,9 +52,12 @@ if (params.help){
 // Configurable variables
 params.name = false
 params.fasta = params.genome ? params.genomes[ params.genome ].fasta ?: false : false
+params.shortReads = ""
+params.longReads = ""
 params.multiqc_config = "$baseDir/conf/multiqc_config.yaml"
 params.email = false
 params.plaintext_email = false
+params.assembler = "spades"
 
 multiqc_config = file(params.multiqc_config)
 output_docs = file("$baseDir/docs/output.md")
@@ -66,12 +67,6 @@ if ( params.fasta ){
     fasta = file(params.fasta)
     if( !fasta.exists() ) exit 1, "Fasta file not found: ${params.fasta}"
 }
-//
-// NOTE - THIS IS NOT USED IN THIS PIPELINE, EXAMPLE ONLY
-// If you want to use the above in a process, define the following:
-//   input:
-//   file fasta from fasta
-//
 
 
 // Has the run name been specified by the user?
@@ -82,12 +77,20 @@ if( !(workflow.runName ==~ /[a-z]+_[a-z]+/) ){
 }
 
 /*
- * Create a channel for input read files
+ * Create a channel for input short read files
  */
 Channel
-    .fromFilePairs( params.reads, size: params.singleEnd ? 1 : 2 )
+    .fromFilePairs( params.shortReads )
     .ifEmpty { exit 1, "Cannot find any reads matching: ${params.reads}\nNB: Path needs to be enclosed in quotes!\nNB: Path requires at least one * wildcard!\nIf this is single-end data, please specify --singleEnd on the command line." }
-    .into { read_files_fastqc }
+    .into { short_reads_qc; short_reads_assembly }
+
+/*
+ * Create a channel for input long read files
+ */
+Channel
+        .fromFile( params.longReads)
+        .ifEmpty { exit 1, "Cannot find any long reads matching: ${params.reads}\nNB: Path needs to be enclosed in quotes!" }
+        .into { long_reads_qc; long_reads_assembly }
 
 
 // Header log info
@@ -96,9 +99,9 @@ log.info " hybrid-assembly v${params.version}"
 log.info "========================================="
 def summary = [:]
 summary['Run Name']     = custom_runName ?: workflow.runName
-summary['Reads']        = params.reads
+summary['Short Reads']  = params.shortReads
+summary['Long Reads']   = params.longReads
 summary['Fasta Ref']    = params.fasta
-summary['Data Type']    = params.singleEnd ? 'Single-End' : 'Paired-End'
 summary['Max Memory']   = params.max_memory
 summary['Max CPUs']     = params.max_cpus
 summary['Max Time']     = params.max_time
@@ -149,10 +152,8 @@ process get_software_versions {
     """
 }
 
-
-
-/*
- * STEP 1 - FastQC
+/**
+ * STEP 1.1 QC for short reads
  */
 process fastqc {
     tag "$name"
@@ -160,7 +161,7 @@ process fastqc {
         saveAs: {filename -> filename.indexOf(".zip") > 0 ? "zips/$filename" : "$filename"}
 
     input:
-    set val(name), file(reads) from read_files_fastqc
+    set val(name), file(reads) from short_reads_qc
 
     output:
     file "*_fastqc.{zip,html}" into fastqc_results
@@ -170,6 +171,60 @@ process fastqc {
     fastqc -q $reads
     """
 }
+
+/**
+ * STEP 1.2 QC for long reads
+ */
+
+/**
+ * STEP 2 Assembly
+ */
+
+/**
+ * SPAdes assembly workflow
+ */
+if (params.assembler == 'spades') {
+    process spades {
+        publishDir "${params.outdir}/spades", mode: 'copy'
+
+        input:
+        file sreads from short_reads_assembly
+        file lreads from long_reads_assembly
+
+        output:
+        file "*" into assembly_results
+
+        script:
+        """
+        
+        """
+
+    }
+
+}
+
+/**
+ * Canu assembly workflow
+ */
+if (params.assembler == 'canu') {
+
+}
+
+/**
+ * MaSuRCA assembly workflow
+ */
+if (params.assembler == 'masurca') {
+
+}
+
+/**
+ * STEP 3.1 QUAST assembly QC
+ */
+
+
+/**
+ * STEP 3.2 BUSCO assembly QC
+ */
 
 
 
@@ -199,101 +254,9 @@ process multiqc {
 
 
 /*
- * STEP 3 - Output Description HTML
- */
-process output_documentation {
-    tag "$prefix"
-    publishDir "${params.outdir}/Documentation", mode: 'copy'
-
-    input:
-    file output_docs
-
-    output:
-    file "results_description.html"
-
-    script:
-    """
-    markdown_to_html.r $output_docs results_description.html
-    """
-}
-
-
-
-/*
  * Completion e-mail notification
  */
 workflow.onComplete {
-
-    // Set up the e-mail variables
-    def subject = "[hybrid-assembly] Successful: $workflow.runName"
-    if(!workflow.success){
-      subject = "[hybrid-assembly] FAILED: $workflow.runName"
-    }
-    def email_fields = [:]
-    email_fields['version'] = params.version
-    email_fields['runName'] = custom_runName ?: workflow.runName
-    email_fields['success'] = workflow.success
-    email_fields['dateComplete'] = workflow.complete
-    email_fields['duration'] = workflow.duration
-    email_fields['exitStatus'] = workflow.exitStatus
-    email_fields['errorMessage'] = (workflow.errorMessage ?: 'None')
-    email_fields['errorReport'] = (workflow.errorReport ?: 'None')
-    email_fields['commandLine'] = workflow.commandLine
-    email_fields['projectDir'] = workflow.projectDir
-    email_fields['summary'] = summary
-    email_fields['summary']['Date Started'] = workflow.start
-    email_fields['summary']['Date Completed'] = workflow.complete
-    email_fields['summary']['Pipeline script file path'] = workflow.scriptFile
-    email_fields['summary']['Pipeline script hash ID'] = workflow.scriptId
-    if(workflow.repository) email_fields['summary']['Pipeline repository Git URL'] = workflow.repository
-    if(workflow.commitId) email_fields['summary']['Pipeline repository Git Commit'] = workflow.commitId
-    if(workflow.revision) email_fields['summary']['Pipeline Git branch/tag'] = workflow.revision
-    if(workflow.container) email_fields['summary']['Docker image'] = workflow.container
-    email_fields['software_versions'] = software_versions
-    email_fields['software_versions']['Nextflow Build'] = workflow.nextflow.build
-    email_fields['software_versions']['Nextflow Compile Timestamp'] = workflow.nextflow.timestamp
-
-    // Render the TXT template
-    def engine = new groovy.text.GStringTemplateEngine()
-    def tf = new File("$baseDir/assets/email_template.txt")
-    def txt_template = engine.createTemplate(tf).make(email_fields)
-    def email_txt = txt_template.toString()
-
-    // Render the HTML template
-    def hf = new File("$baseDir/assets/email_template.html")
-    def html_template = engine.createTemplate(hf).make(email_fields)
-    def email_html = html_template.toString()
-
-    // Render the sendmail template
-    def smail_fields = [ email: params.email, subject: subject, email_txt: email_txt, email_html: email_html, baseDir: "$baseDir" ]
-    def sf = new File("$baseDir/assets/sendmail_template.txt")
-    def sendmail_template = engine.createTemplate(sf).make(smail_fields)
-    def sendmail_html = sendmail_template.toString()
-
-    // Send the HTML e-mail
-    if (params.email) {
-        try {
-          if( params.plaintext_email ){ throw GroovyException('Send plaintext e-mail, not HTML') }
-          // Try to send HTML e-mail using sendmail
-          [ 'sendmail', '-t' ].execute() << sendmail_html
-          log.info "[hybrid-assembly] Sent summary e-mail to $params.email (sendmail)"
-        } catch (all) {
-          // Catch failures and try with plaintext
-          [ 'mail', '-s', subject, params.email ].execute() << email_txt
-          log.info "[hybrid-assembly] Sent summary e-mail to $params.email (mail)"
-        }
-    }
-
-    // Write summary e-mail HTML to a file
-    def output_d = new File( "${params.outdir}/Documentation/" )
-    if( !output_d.exists() ) {
-      output_d.mkdirs()
-    }
-    def output_hf = new File( output_d, "pipeline_report.html" )
-    output_hf.withWriter { w -> w << email_html }
-    def output_tf = new File( output_d, "pipeline_report.txt" )
-    output_tf.withWriter { w -> w << email_txt }
-
     log.info "[hybrid-assembly] Pipeline Complete"
 
 }
