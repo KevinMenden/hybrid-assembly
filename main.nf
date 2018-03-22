@@ -196,7 +196,9 @@ if (params.assembler == 'spades') {
 
         script:
         """
-        
+        spades.py -o ${params.outdir} \\
+        --nanopore $lreads \\
+        -1 ${sreads[0]} -2 ${sreads[1]}
         """
 
     }
