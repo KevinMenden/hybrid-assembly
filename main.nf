@@ -51,7 +51,6 @@ if (params.help){
 
 // Configurable variables
 params.name = false
-params.fasta = params.genome ? params.genomes[ params.genome ].fasta ?: false : false
 params.shortReads = ""
 params.longReads = ""
 params.multiqc_config = "$baseDir/conf/multiqc_config.yaml"
@@ -80,17 +79,17 @@ if( !(workflow.runName ==~ /[a-z]+_[a-z]+/) ){
  * Create a channel for input short read files
  */
 Channel
-    .fromFilePairs( params.shortReads )
-    .ifEmpty { exit 1, "Cannot find any reads matching: ${params.reads}\nNB: Path needs to be enclosed in quotes!\nNB: Path requires at least one * wildcard!\nIf this is single-end data, please specify --singleEnd on the command line." }
+    .fromFilePairs( params.shortReads, size: 2 )
+    .ifEmpty { exit 1, "Cannot find any reads matching: ${params.shortReads}\nNB: Path needs to be enclosed in quotes!\nNB: Path requires at least one * wildcard!" }
     .into { short_reads_qc; short_reads_assembly }
 
-/*
- * Create a channel for input long read files
- */
-Channel
-        .fromFile( params.longReads)
-        .ifEmpty { exit 1, "Cannot find any long reads matching: ${params.reads}\nNB: Path needs to be enclosed in quotes!" }
-        .into { long_reads_qc; long_reads_assembly }
+///*
+// * Create a channel for input long read files
+// */
+//Channel
+//        .fromFile( params.longReads)
+//        .ifEmpty { exit 1, "Cannot find any long reads matching: ${params.reads}\nNB: Path needs to be enclosed in quotes!" }
+//        .into { long_reads_qc; long_reads_assembly }
 
 
 // Header log info
@@ -137,40 +136,40 @@ try {
 /*
  * Parse software version numbers
  */
-process get_software_versions {
-
-    output:
-    file 'software_versions_mqc.yaml' into software_versions_yaml
-
-    script:
-    """
-    echo $params.version > v_pipeline.txt
-    echo $workflow.nextflow.version > v_nextflow.txt
-    fastqc --version > v_fastqc.txt
-    multiqc --version > v_multiqc.txt
-    scrape_software_versions.py > software_versions_mqc.yaml
-    """
-}
+//process get_software_versions {
+//
+//    output:
+//    file 'software_versions_mqc.yaml' into software_versions_yaml
+//
+//    script:
+//    """
+//    echo $params.version > v_pipeline.txt
+//    echo $workflow.nextflow.version > v_nextflow.txt
+//    fastqc --version > v_fastqc.txt
+//    multiqc --version > v_multiqc.txt
+//    scrape_software_versions.py > software_versions_mqc.yaml
+//    """
+//}
 
 /**
  * STEP 1.1 QC for short reads
  */
-process fastqc {
-    tag "$name"
-    publishDir "${params.outdir}/fastqc", mode: 'copy',
-        saveAs: {filename -> filename.indexOf(".zip") > 0 ? "zips/$filename" : "$filename"}
-
-    input:
-    set val(name), file(reads) from short_reads_qc
-
-    output:
-    file "*_fastqc.{zip,html}" into fastqc_results
-
-    script:
-    """
-    fastqc -q $reads
-    """
-}
+//process fastqc {
+//    tag "$name"
+//    publishDir "${params.outdir}/fastqc", mode: 'copy',
+//        saveAs: {filename -> filename.indexOf(".zip") > 0 ? "zips/$filename" : "$filename"}
+//
+//    input:
+//    set val(name), file(reads) from short_reads_qc
+//
+//    output:
+//    file "*_fastqc.{zip,html}" into fastqc_results
+//
+//    script:
+//    """
+//    fastqc -q $reads
+//    """
+//}
 
 /**
  * STEP 1.2 QC for long reads
@@ -185,20 +184,21 @@ process fastqc {
  */
 if (params.assembler == 'spades') {
     process spades {
+        tag "$name"
         publishDir "${params.outdir}/spades", mode: 'copy'
 
         input:
-        file sreads from short_reads_assembly
-        file lreads from long_reads_assembly
+        set val(name), file(sreads) from short_reads_assembly
+        //file lreads from long_reads_assembly
 
         output:
-        file "*" into assembly_results
+        file "final_scaffolds.fasta" into assembly_results
+        file "*" into spades_results
 
         script:
         """
-        spades.py -o ${params.outdir} \\
-        --nanopore $lreads \\
-        -1 ${sreads[0]} -2 ${sreads[1]}
+        spades.py -o "spades_results" -t 6 -1 ${sreads[0]} -2 ${sreads[1]}
+        mv spades_results/scaffolds.fasta final_scaffolds.fasta
         """
 
     }
@@ -222,7 +222,20 @@ if (params.assembler == 'masurca') {
 /**
  * STEP 3.1 QUAST assembly QC
  */
+process quast {
+    publishDir "${params.outdir}", mode: 'copy'
 
+    input:
+    file scaffolds from assembly_results
+
+    output:
+    file "*" into quast_results
+
+    script:
+    """
+    quast --scaffolds $scaffolds
+    """
+}
 
 /**
  * STEP 3.2 BUSCO assembly QC
@@ -238,8 +251,9 @@ process multiqc {
 
     input:
     file multiqc_config
-    file ('fastqc/*') from fastqc_results.collect()
-    file ('software_versions/*') from software_versions_yaml
+    //file ('fastqc/*') from fastqc_results.collect()
+    //file ('software_versions/*') from software_versions_yaml
+    file ('quast_results/*') from quast_results
 
     output:
     file "*multiqc_report.html" into multiqc_report
