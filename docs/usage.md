@@ -10,9 +10,10 @@ NXF_OPTS='-Xms1g -Xmx4g'
 ```
 
 ## Running the pipeline
-The typical command for running the pipeline is as follows:
+A typical command for running the pipeline is as follows:
 ```bash
-nextflow run kevinmenden/hybrid-assembly --reads '*_R{1,2}.fastq.gz' -profile docker
+nextflow run kevinmenden/hybrid-assembly --shortReads '*_R{1,2}.fastq.gz' --longReads long_reads.fastq.gz --assembler spades
+ -profile docker
 ```
 
 This will launch the pipeline with the `docker` configuration profile. See below for more information about profiles.
@@ -48,7 +49,7 @@ Use this parameter to choose a configuration profile. Each profile is designed f
 
 * `docker`
     * A generic configuration profile to be used with [Docker](http://docker.com/)
-    * Runs using the `local` executor and pulls software from dockerhub: [`hybrid-assembly`](http://hub.docker.com/r/hybrid-assembly/)
+    * Runs using the `local` executor and pulls software from dockerhub: [`hybrid-assembly`](http://hub.docker.com/r/kevinmenden/hybrid-assembly/)
 * `aws`
     * A starter configuration for running the pipeline on Amazon Web Services. Uses docker and Spark.
     * See [`docs/configuration/aws.md`](configuration/aws.md)
@@ -58,11 +59,11 @@ Use this parameter to choose a configuration profile. Each profile is designed f
 * `none`
     * No configuration at all. Useful if you want to build your own config from scratch and want to avoid loading in the default `base` config profile (not recommended).
 
-### `--reads`
-Use this to specify the location of your input FastQ files. For example:
+### `--shortReads`
+Use this to specify the location of your paired, short-read files in fastq.gz format. For example:
 
 ```bash
---reads 'path/to/data/sample_*_{1,2}.fastq'
+--shortReads 'path/to/data/sample_*_{1,2}.fastq.gz'
 ```
 
 Please note the following requirements:
@@ -73,20 +74,18 @@ Please note the following requirements:
 
 If left unspecified, a default pattern is used: `data/*{1,2}.fastq.gz`
 
-### `--singleEnd`
-By default, the pipeline expects paired-end data. If you have single-end data, you need to specify `--singleEnd` on the command line when you launch the pipeline. A normal glob pattern, enclosed in quotation marks, can then be used for `--reads`. For example:
+### `--longReads`
+Use this flag to indicate the path to your gzipped fastq files containing the long reads (Nanopore or PacBio).
 
 ```bash
---singleEnd --reads '*.fastq'
+--longReads path/to/long/reads/my_long_reads.fastq.gz
 ```
-
-It is not possible to run a mixture of single-end and paired-end files in one run.
 
 
 ## Reference Genomes
-
 The pipeline config files come bundled with paths to the illumina iGenomes reference index files. If running with docker or AWS, the configuration is set up to use the [AWS-iGenomes](https://ewels.github.io/AWS-iGenomes/) resource.
-
+If a reference genome is available for your species, you can specify it with `--genome` to use an iGenomes reference, or with `--fasta`
+to specify your own reference genome with.
 ### `--genome` (using iGenomes)
 There are 31 different species supported in the iGenomes references. To run the pipeline, you must specify which to use with the `--genome` flag.
 
@@ -178,9 +177,7 @@ Should be a string in the format integer-unit. eg. `--max_cpus 1`
 
 ### `--plaintext_email`
 Set to receive plain-text e-mails instead of HTML formatted.
-
-### `--sampleLevel`
-Used to turn of the edgeR MDS and heatmap. Set automatically when running on fewer than 3 samples.
+n of the edgeR MDS and heatmap. Set automatically when running on fewer than 3 samples.
 
 ### `--multiqc_config`
 If you would like to supply a custom config file to MultiQC, you can specify a path with `--multiqc_config`. This is used instead of the config file specific to the pipeline.

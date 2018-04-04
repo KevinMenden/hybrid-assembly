@@ -26,3 +26,7 @@ If you still have an issue with running the pipeline then feel free to contact u
 Have look at the [pipeline website](https://github.com/kevinmenden/hybrid-assembly) to find out how.
 
 If you have problems that are related to Nextflow and not our pipeline then check out the [Nextflow gitter channel](https://gitter.im/nextflow-io/nextflow) or the [google group](https://groups.google.com/forum/#!forum/nextflow).
+
+### Execution rights
+It is possible that you don't have execution rights for scripts in the bin/ directory after downloading from GitHub.
+In that case, you simply have to set the correct rights for these scripts manually and run again (or resume).
