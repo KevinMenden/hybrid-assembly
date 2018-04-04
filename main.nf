@@ -60,7 +60,6 @@ params.assembler = "spades"
 params.genomeSize = 0
 
 multiqc_config = file(params.multiqc_config)
-output_docs = file("$baseDir/docs/output.md")
 
 // Validate inputs
 if ( params.fasta ){
@@ -137,20 +136,23 @@ try {
 /*
  * Parse software version numbers
  */
-//process get_software_versions {
-//
-//    output:
-//    file 'software_versions_mqc.yaml' into software_versions_yaml
-//
-//    script:
-//    """
-//    echo $params.version > v_pipeline.txt
-//    echo $workflow.nextflow.version > v_nextflow.txt
-//    fastqc --version > v_fastqc.txt
-//    multiqc --version > v_multiqc.txt
-//    scrape_software_versions.py > software_versions_mqc.yaml
-//    """
-//}
+process get_software_versions {
+
+    output:
+    file 'software_versions_mqc.yaml' into software_versions_yaml
+
+    script:
+    """
+    echo $params.version > v_pipeline.txt
+    echo $workflow.nextflow.version > v_nextflow.txt
+    fastqc --version > v_fastqc.txt
+    multiqc --version > v_multiqc.txt
+    spades.py --version > v_spades.txt
+    canu --version > v_canu.txt
+    quast --version > v_quast.txt
+    scrape_software_versions.py > software_versions_mqc.yaml
+    """
+}
 
 /**
  * STEP 1.1 QC for short reads
@@ -175,6 +177,22 @@ process fastqc {
 /**
  * STEP 1.2 QC for long reads
  */
+process nanoqc {
+    tag
+    publishDir "${params.outdir}/nanoqc", mode: 'copy'
+
+    input:
+    file lreads from long_reads_qc
+
+    output:
+    file "*" into nanoqc_results
+
+    script:
+    """
+    source activate nanoqc-env
+    NanoPlot --fastq $lreads
+    """
+}
 
 /**
  * STEP 2 Assembly
@@ -274,7 +292,7 @@ process multiqc {
     input:
     file multiqc_config
     file ('fastqc/*') from fastqc_results.collect()
-    //file ('software_versions/*') from software_versions_yaml
+    file ('software_versions/*') from software_versions_yaml
     file ('quast_results/*') from quast_results
 
     output:

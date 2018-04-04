@@ -26,3 +26,6 @@ CMD [ "/bin/bash" ]
 COPY environment.yml /
 RUN conda env create -f /environment.yml
 ENV PATH /opt/conda/envs/assembly-env/bin:$PATH
+
+COPY nanoqc-env.yml /
+RUN conda env create -f /nanoqc-env.yml
