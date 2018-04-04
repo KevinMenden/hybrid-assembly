@@ -25,6 +25,7 @@ dependencies:
   - perl-filesys-df=0.92=1
   - perl-threaded=5.22.0=pl5.22.0_12
   - perl-yaml=1.24=0
+  - pilon=1.22=py27_0
   - python-dateutil=2.3=py27_0
   - quast=4.6.3=py27_boost1.64_1
   - samtools=1.7=1
@@ -51,7 +52,7 @@ dependencies:
   - backports.functools_lru_cache=1.5=py27_1
   - backports_abc=0.5=py27h7b3c97b_0
   - bzip2=1.0.6=h9a117a8_4
-  - ca-certificates=2017.08.26=h1d4fec5_0
+  - ca-certificates=2018.03.07=0
   - certifi=2018.1.18=py27_0
   - cffi=1.11.5=py27h9745a5d_0
   - chardet=3.0.4=py27hfa10054_1
@@ -104,7 +105,7 @@ dependencies:
   - numpy=1.14.2=py27hdbf6ddf_0
   - olefile=0.45.1=py27_0
   - openjdk=8.0.121=1
-  - openssl=1.0.2n=hb7f436b_0
+  - openssl=1.0.2o=h20670df_0
   - pango=1.40.11=h8191d47_0
   - pcre=8.41=hc27e229_1
   - pillow=5.0.0=py27h3deb7b8_0

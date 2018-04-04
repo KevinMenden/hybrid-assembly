@@ -7,7 +7,7 @@ Pipeline for hybrid assembly using short and long reads.
 [![Nextflow](https://img.shields.io/badge/nextflow-%E2%89%A50.27.0-brightgreen.svg)](https://www.nextflow.io/)
 
 [![install with bioconda](https://img.shields.io/badge/install%20with-bioconda-brightgreen.svg)](http://bioconda.github.io/)
-[![Docker](https://img.shields.io/docker/automated/hybrid-assembly.svg)](https://hub.docker.com/r/hybrid-assembly)
+[![Docker Repository on Dockerhub](https://img.shields.io/badge/docker-available-green.svg "Docker Repository on Dockerhub")](https://hub.docker.com/r/kevinmenden/hybrid-assembly/)
 ![Singularity Container available](
 https://img.shields.io/badge/singularity-available-7E4C74.svg)
 
@@ -30,3 +30,5 @@ The hybrid-assembly pipeline comes with documentation about the pipeline, found 
 
 ### Credits
 This pipeline was written by Kevin Menden ([kevinmenden](https://github.com/kevinmenden)) at [DZNE](http://www.dzne.de).
+
+[![DZNE](assets/dzne-logo.jpeg)](http://www.dzne.de)

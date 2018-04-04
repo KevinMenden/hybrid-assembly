@@ -178,7 +178,7 @@ process fastqc {
  * STEP 1.2 QC for long reads
  */
 process nanoqc {
-    tag
+    tag "${lreads.baseName}"
     publishDir "${params.outdir}/nanoqc", mode: 'copy'
 
     input:
@@ -200,8 +200,12 @@ process nanoqc {
 
 /**
  * SPAdes assembly workflow
+ * 1. Hybrid assembly with SPAdes
+ * 2. quast for assesment
  */
 if (params.assembler == 'spades') {
+
+    // Create assembly with SPAdes
     process spades {
         tag "$name"
         publishDir "${params.outdir}/spades", mode: 'copy'
@@ -211,13 +215,33 @@ if (params.assembler == 'spades') {
         file lreads from long_reads_assembly
 
         output:
-        file "final_scaffolds.fasta" into assembly_results
+        file "scaffolds.fasta" into assembly_results_scaffolds
+        file "contigs.fasta" into assembly_results_contigs
         file "*" into spades_results
 
         script:
         """
         spades.py -o "spades_results" -t 6 -1 ${sreads[0]} -2 ${sreads[1]} --nanopore $lreads
-        mv spades_results/scaffolds.fasta final_scaffolds.fasta
+        mv spades_results/scaffolds.fasta scaffolds.fasta
+        mv spades_results/contigs.fasta contigs.fasta
+        """
+
+    }
+
+    // Assess assembly with quast
+    process quast_spades {
+        publishDir "${params.outdir}", mode: 'copy'
+
+        input:
+        file scaffolds from assembly_results_scaffolds
+        file contigs from assembly_results_contigs
+
+        output:
+        file "*" into quast_results
+
+        script:
+        """
+        quast $contigs $scaffolds
         """
 
     }
@@ -226,26 +250,89 @@ if (params.assembler == 'spades') {
 
 /**
  * Canu assembly workflow
+ * 1. assembly with Canu
+ * 2. map short reads with minimap2
+ * 3. polish assembly with pilon
+ * 4. quast for assesment
  */
 if (params.assembler == 'canu') {
     if (params.genomeSize == 0){
         log.error "No genome size specified. Necessary for Canu assembly workflow"
         exit 1
     }
+    // Create assembly with Canu
     process canu {
+        tag "${lreads.baseName}"
         publishDir "${params.outdir}/canu", mode: 'copy'
 
         input:
         file lreads from long_reads_assembly
 
         output:
-        file "*contigs.fasta" into assembly_results
+        file "*contigs.fasta" into assembly_result_canu
         file "*" into canu_results
 
         script:
         """
         canu \\
-        -p test -d canu_results genomeSize=$params.genomeSize -nanopore-raw $lreads
+        -p test genomeSize=$params.genomeSize -nanopore-raw $lreads gnuplotTested=true
+        """
+    }
+    assembly_result_canu.into{ assembly_mapping; assembly_pilon }
+
+    // Map short reads to assembly with minimap2
+    process minimap {
+        tag "${sreads[0].baseName}"
+        publishDir "${params.outdir}/minimap", mode: 'copy'
+
+        input:
+        file assembly from assembly_mapping
+        set val(name), file(sreads) from short_reads_assembly
+
+        output:
+        file "*" into minimap_alignment_results
+        file "*.sorted.bam" into short_reads_mapped_bam
+
+        script:
+        """
+        minimap2 -ax sr $assembly ${sreads[0]} ${sreads[1]} > sreads_assembly_aln.sam
+        samtools view -h -b sreads_assembly_aln.sam > sreads_assembly_aln.bam
+        samtools sort sreads_assembly_aln.bam > sreads_assembly_aln.sorted.bam
+        """
+
+    }
+
+    // Polish assembly with pilon
+    process pilon {
+        tag "canu_assembly"
+        input:
+        file sr_bam from short_reads_mapped_bam
+        file assembly from assembly_pilon
+
+        output:
+        file "*" into assembly_results_scaffolds
+
+        script:
+        """
+        samtools index $sr_bam
+        pilon --genome $assembly --bam $sr_bam
+        """
+
+    }
+
+    // Quast for canu pipeline
+    process quast_canu {
+        publishDir "${params.outdir}", mode: 'copy'
+
+        input:
+        file scaffolds from assembly_results_scaffolds
+
+        output:
+        file "*" into quast_results
+
+        script:
+        """
+        quast --scaffolds $scaffolds
         """
     }
 
@@ -261,20 +348,32 @@ if (params.assembler == 'masurca') {
 /**
  * STEP 3.1 QUAST assembly QC
  */
-process quast {
-    publishDir "${params.outdir}", mode: 'copy'
-
-    input:
-    file scaffolds from assembly_results
-
-    output:
-    file "*" into quast_results
-
-    script:
-    """
-    quast --scaffolds $scaffolds
-    """
-}
+//process quast {
+//    publishDir "${params.outdir}", mode: 'copy'
+//
+//    input:
+//    if (params.assembler == "spades"){
+//        file scaffolds from assembly_results_scaffolds
+//        file contigs from assembly_results_contigs
+//    }
+//    if (params.assembler == "canu"){
+//        file scaffolds from assembly_results_scaffolds
+//    }
+//
+//
+//    output:
+//    file "*" into quast_results
+//
+//    script:
+//    if (params.assembler == "spades")
+//        """
+//        quast $contigs $scaffolds
+//        """
+//    if (params.assembler == "canu")
+//        """
+//        quast --scaffolds $scaffolds
+//        """
+//}
 
 /**
  * STEP 3.2 BUSCO assembly QC
@@ -284,7 +383,8 @@ process quast {
 
 
 /*
- * STEP 2 - MultiQC
+ * Step 3 MultiQC
+ * collect the results
  */
 process multiqc {
     publishDir "${params.outdir}/MultiQC", mode: 'copy'
