@@ -57,6 +57,7 @@ params.multiqc_config = "$baseDir/conf/multiqc_config.yaml"
 params.email = false
 params.plaintext_email = false
 params.assembler = "spades"
+params.genomeSize = 0
 
 multiqc_config = file(params.multiqc_config)
 output_docs = file("$baseDir/docs/output.md")
@@ -86,10 +87,10 @@ Channel
 ///*
 // * Create a channel for input long read files
 // */
-//Channel
-//        .fromFile( params.longReads)
-//        .ifEmpty { exit 1, "Cannot find any long reads matching: ${params.reads}\nNB: Path needs to be enclosed in quotes!" }
-//        .into { long_reads_qc; long_reads_assembly }
+Channel
+        .fromPath( params.longReads )
+        .ifEmpty { exit 1, "Cannot find any long reads matching: ${params.reads}\nNB: Path needs to be enclosed in quotes!" }
+        .into { long_reads_qc; long_reads_assembly }
 
 
 // Header log info
@@ -154,22 +155,22 @@ try {
 /**
  * STEP 1.1 QC for short reads
  */
-//process fastqc {
-//    tag "$name"
-//    publishDir "${params.outdir}/fastqc", mode: 'copy',
-//        saveAs: {filename -> filename.indexOf(".zip") > 0 ? "zips/$filename" : "$filename"}
-//
-//    input:
-//    set val(name), file(reads) from short_reads_qc
-//
-//    output:
-//    file "*_fastqc.{zip,html}" into fastqc_results
-//
-//    script:
-//    """
-//    fastqc -q $reads
-//    """
-//}
+process fastqc {
+    tag "$name"
+    publishDir "${params.outdir}/fastqc", mode: 'copy',
+        saveAs: {filename -> filename.indexOf(".zip") > 0 ? "zips/$filename" : "$filename"}
+
+    input:
+    set val(name), file(reads) from short_reads_qc
+
+    output:
+    file "*_fastqc.{zip,html}" into fastqc_results
+
+    script:
+    """
+    fastqc -q $reads
+    """
+}
 
 /**
  * STEP 1.2 QC for long reads
@@ -189,7 +190,7 @@ if (params.assembler == 'spades') {
 
         input:
         set val(name), file(sreads) from short_reads_assembly
-        //file lreads from long_reads_assembly
+        file lreads from long_reads_assembly
 
         output:
         file "final_scaffolds.fasta" into assembly_results
@@ -197,7 +198,7 @@ if (params.assembler == 'spades') {
 
         script:
         """
-        spades.py -o "spades_results" -t 6 -1 ${sreads[0]} -2 ${sreads[1]}
+        spades.py -o "spades_results" -t 6 -1 ${sreads[0]} -2 ${sreads[1]} --nanopore $lreads
         mv spades_results/scaffolds.fasta final_scaffolds.fasta
         """
 
@@ -209,6 +210,26 @@ if (params.assembler == 'spades') {
  * Canu assembly workflow
  */
 if (params.assembler == 'canu') {
+    if (params.genomeSize == 0){
+        log.error "No genome size specified. Necessary for Canu assembly workflow"
+        exit 1
+    }
+    process canu {
+        publishDir "${params.outdir}/canu", mode: 'copy'
+
+        input:
+        file lreads from long_reads_assembly
+
+        output:
+        file "*contigs.fasta" into assembly_results
+        file "*" into canu_results
+
+        script:
+        """
+        canu \\
+        -p test -d canu_results genomeSize=$params.genomeSize -nanopore-raw $lreads
+        """
+    }
 
 }
 
@@ -239,6 +260,7 @@ process quast {
 
 /**
  * STEP 3.2 BUSCO assembly QC
+ * !! CURRENTLY NOT IMPLEMENTED BECAUSE OF BUSCO LINEAGE DEPENDENCY !!
  */
 
 
@@ -251,7 +273,7 @@ process multiqc {
 
     input:
     file multiqc_config
-    //file ('fastqc/*') from fastqc_results.collect()
+    file ('fastqc/*') from fastqc_results.collect()
     //file ('software_versions/*') from software_versions_yaml
     file ('quast_results/*') from quast_results
 
