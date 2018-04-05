@@ -81,11 +81,18 @@ Use this flag to indicate the path to your gzipped fastq files containing the lo
 --longReads path/to/long/reads/my_long_reads.fastq.gz
 ```
 
+### `--assembler`
+You can choose between two different assemblers: [SPAdes](http://cab.spbu.ru/software/spades/) and [Canu](https://github.com/marbl/canu).
+This flag is set to 'spades' by default. If you want to use the Canu assembler instead, you will have to specificy the genome size as well.
+
+```bash
+--assembler canu --genomeSize 4.6m
+```
 
 ## Reference Genomes
 The pipeline config files come bundled with paths to the illumina iGenomes reference index files. If running with docker or AWS, the configuration is set up to use the [AWS-iGenomes](https://ewels.github.io/AWS-iGenomes/) resource.
 If a reference genome is available for your species, you can specify it with `--genome` to use an iGenomes reference, or with `--fasta`
-to specify your own reference genome with.
+to specify your own reference genome with. Note that reference genome guided assembly is only available for the SPAdes assembly workflow.
 ### `--genome` (using iGenomes)
 There are 31 different species supported in the iGenomes references. To run the pipeline, you must specify which to use with the `--genome` flag.
 

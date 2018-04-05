@@ -52,6 +52,7 @@ if (params.help){
 
 // Configurable variables
 params.name = false
+params.fasta = false
 params.shortReads = ""
 params.longReads = ""
 params.multiqc_config = "$baseDir/conf/multiqc_config.yaml"
@@ -284,7 +285,11 @@ if (params.assembler == 'canu') {
         script:
         """
         canu \\
-        -p test genomeSize=$params.genomeSize -nanopore-raw $lreads gnuplotTested=true
+        -p test genomeSize=$params.genomeSize -nanopore-raw $lreads gnuplotTested=true \\
+        correctedErrorRate=$params.correctedErrorRate \\
+        rawErrorRate=$params.rawErrorRate \\
+        minReadLength=$params.minReadLength \\
+        minOverlapLength=$params.minOverlapLength
         """
     }
     assembly_result_canu.into{ assembly_mapping; assembly_pilon }

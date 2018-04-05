@@ -1,6 +1,4 @@
 # hybrid-assembly
-Pipeline for hybrid assembly using short and long reads.
-
 # UNDER DEVELOPMENT
 
 [![Build Status](https://travis-ci.org/kevinmenden/hybrid-assembly.svg?branch=master)](https://travis-ci.org/kevinmenden/hybrid-assembly)
@@ -13,8 +11,8 @@ https://img.shields.io/badge/singularity-available-7E4C74.svg)
 
 ### Introduction
 hybrid-assembly: Pipeline for hybrid assembly using short and long reads.
-
 The pipeline is built using [Nextflow](https://www.nextflow.io), a workflow tool to run tasks across multiple compute infrastructures in a very portable manner. It comes with docker / singularity containers making installation trivial and results highly reproducible.
+
 
 
 ### Documentation
