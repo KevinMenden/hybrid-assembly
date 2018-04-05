@@ -1,8 +1,6 @@
 # hybrid-assembly: Reference Genomes Configuration
 
-The hybrid-assembly pipeline needs a reference genome for alignment and annotation. If not already available, start by downloading the relevant reference, for example from [illumina iGenomes](https://support.illumina.com/sequencing/sequencing_software/igenome.html).
-
-The minimal requirements are a FASTA file.
+The hybrid-assembly pipeline can take a reference genome as input for reference guided assembly.
 
 ## Adding paths to a config file
 Specifying long paths every time you run the pipeline is a pain. To make this easier, the pipeline comes configured to understand reference genome keywords which correspond to preconfigured paths, meaning that you can just specify `--genome ID` when running the pipeline. 

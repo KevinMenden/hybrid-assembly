@@ -319,6 +319,8 @@ if (params.assembler == 'canu') {
     // Polish assembly with pilon
     process pilon {
         tag "canu_assembly"
+        publishDir "${params.outdir}/pilon", mode: 'copy'
+
         input:
         file sr_bam from short_reads_mapped_bam
         file assembly from assembly_pilon
