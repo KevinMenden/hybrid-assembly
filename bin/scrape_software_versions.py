@@ -11,8 +11,8 @@ regexes = {
     'QUAST': ['v_quast.txt', r"WARNING: Python locale settings can't be changed\nQUAST v(\S+)"],
     'Canu': ['v_canu.txt', r"Canu (\S+)"],
     'SPAdes': ['v_spades.txt', r"SPAdes v(\S+)"],
-    'minimap2': ['v_minimap.txt', r"(\S+"],
-    'pilon': ['v_pilon.txt', r"(Pilon version (\S+)"]
+    'minimap2': ['v_minimap.txt', r"(\S+)"],
+    'pilon': ['v_pilon.txt', r"Pilon version (\S+)"]
 }
 results = OrderedDict()
 results['hybrid-assembly'] = '<span style="color:#999999;\">N/A</span>'
@@ -22,6 +22,8 @@ results['MultiQC'] = '<span style="color:#999999;\">N/A</span>'
 results['QUAST'] = '<span style="color:#999999;\">N/A</span>'
 results['Canu'] = '<span style="color:#999999;\">N/A</span>'
 results['SPAdes'] = '<span style="color:#999999;\">N/A</span>'
+results['minimap2'] = '<span style="color:#999999;\">N/A</span>'
+results['pilon'] = '<span style="color:#999999;\">N/A</span>'
 
 # Search each file using its regex
 for k, v in regexes.items():

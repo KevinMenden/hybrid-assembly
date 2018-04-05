@@ -29,8 +29,9 @@ def helpMessage() {
       --longReads                   The long reads
       -profile                      Hardware config to use. docker / aws
 
-    References                      If not specified in the configuration file or you wish to overwrite any of the references.
+    References                      If you want to use a reference genome
       --fasta                       Path to Fasta reference
+      --genome                      Name of iGenomes reference to use
 
     Other options:
       --outdir                      The output directory where the results will be saved
@@ -65,6 +66,9 @@ multiqc_config = file(params.multiqc_config)
 if ( params.fasta ){
     fasta = file(params.fasta)
     if( !fasta.exists() ) exit 1, "Fasta file not found: ${params.fasta}"
+    if( params.genome ) log.info "Genome and reference specified. Reference will be used!"
+} else {
+    fasta = file("placeholder") // create placeholder
 }
 
 
@@ -90,6 +94,7 @@ Channel
         .fromPath( params.longReads )
         .ifEmpty { exit 1, "Cannot find any long reads matching: ${params.reads}\nNB: Path needs to be enclosed in quotes!" }
         .into { long_reads_qc; long_reads_assembly }
+
 
 
 // Header log info
@@ -213,6 +218,7 @@ if (params.assembler == 'spades') {
         publishDir "${params.outdir}/spades", mode: 'copy'
 
         input:
+        file fasta from fasta
         set val(name), file(sreads) from short_reads_assembly
         file lreads from long_reads_assembly
 
@@ -222,8 +228,9 @@ if (params.assembler == 'spades') {
         file "*" into spades_results
 
         script:
+        ref_genome = params.fasta ? "--trusted-contigs $fasta" : ''
         """
-        spades.py -o "spades_results" -t 6 -1 ${sreads[0]} -2 ${sreads[1]} --nanopore $lreads
+        spades.py -o "spades_results" -t 6 -1 ${sreads[0]} -2 ${sreads[1]} --nanopore $lreads $ref_genome
         mv spades_results/scaffolds.fasta scaffolds.fasta
         mv spades_results/contigs.fasta contigs.fasta
         """
