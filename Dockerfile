@@ -29,3 +29,9 @@ ENV PATH /opt/conda/envs/assembly-env/bin:$PATH
 
 COPY nanoqc-env.yml /
 RUN conda env create -f /nanoqc-env.yml
+
+# Try to install MaSuRCA
+RUN apt-get update && apt-get install -y g++ libboost-all-dev zlib1g-dev libbz2-dev make
+RUN curl -fsSL https://github.com/alekseyzimin/masurca/files/1668918/MaSuRCA-3.2.4.tar.gz -o /opt/MaSuRCA-3.2.4.tar.gz
+RUN cd /opt/; tar -xzvf MaSuRCA-3.2.4.tar.gz; cd MaSuRCA-3.2.4; ./install.sh
+ENV PATH $PATH:/opt/MaSuRCA-3.2.4/bin
