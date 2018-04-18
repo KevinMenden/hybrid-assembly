@@ -231,7 +231,7 @@ if (params.assembler == 'spades') {
         script:
         ref_genome = params.fasta ? "--trusted-contigs $fasta" : ''
         """
-        spades.py -o "spades_results" -t ${task.cpus} -1 ${sreads[0]} -2 ${sreads[1]} --nanopore $lreads $ref_genome
+        spades.py -o "spades_results" -t ${task.cpus} -m $params.mem_spades -1 ${sreads[0]} -2 ${sreads[1]} --nanopore $lreads $ref_genome
         mv spades_results/scaffolds.fasta scaffolds.fasta
         mv spades_results/contigs.fasta contigs.fasta
         """
