@@ -358,6 +358,9 @@ if (params.assembler == 'canu') {
  * MaSuRCA assembly workflow
  */
 if (params.assembler == 'masurca') {
+    // Generate MaSuRCA config file
+
+    // MaSuRCA assembly
 
 }
 
