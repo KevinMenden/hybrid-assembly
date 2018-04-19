@@ -27,11 +27,14 @@ def helpMessage() {
       --assembler                   The assembler pipeline to choose. One of 'spades' | 'canu' | 'masurca'
       --shortReads                  The paired short reads
       --longReads                   The long reads
-      -profile                      Hardware config to use. docker / aws
+      -profile                      Hardware config to use.
 
     References                      If you want to use a reference genome
       --fasta                       Path to Fasta reference
       --genome                      Name of iGenomes reference to use
+
+    Options:
+      --lr_type                     Long read technology. One of 'nanopore' | 'pacbio' . Default: 'nanopore'
 
     Other options:
       --outdir                      The output directory where the results will be saved
@@ -230,8 +233,9 @@ if (params.assembler == 'spades') {
 
         script:
         ref_genome = params.fasta ? "--trusted-contigs $fasta" : ''
+        lr = (params.lr_type == 'nanopore') ? '--nanopore' : '--pacbio'
         """
-        spades.py -o "spades_results" -t ${task.cpus} -m $params.mem_spades -1 ${sreads[0]} -2 ${sreads[1]} --nanopore $lreads $ref_genome
+        spades.py -o "spades_results" -t ${task.cpus} -m $params.mem_spades -1 ${sreads[0]} -2 ${sreads[1]} $lr $lreads $ref_genome
         mv spades_results/scaffolds.fasta scaffolds.fasta
         mv spades_results/contigs.fasta contigs.fasta
         """
@@ -358,41 +362,54 @@ if (params.assembler == 'canu') {
  * MaSuRCA assembly workflow
  */
 if (params.assembler == 'masurca') {
-    // Generate MaSuRCA config file
+    // Generate MaSuRCA config file and run assembler
+    process masurca {
+        tag "$name"
+        publishDir "${params.outdir}/masurca", mode: 'copy'
 
-    // MaSuRCA assembly
+        input:
+        file fasta from fasta
+        set val(name), file(sreads) from short_reads_assembly
+        file lreads from long_reads_assembly
+
+        output:
+        file "masurca_config.txt" into masurca_config_file
+        file "final.genome.scf.fasta" into assembly_results_scaffolds
+
+        script:
+        """
+        masurca_config.py \\
+        --sr1 ${sreads[0]} --sr2 ${sreads[1]} \\
+        --isize $params.insert_size --stdev $params.insert_stdv \\
+        --lr $lreads --lr_type $params.lr_type \\
+        --genome_size $params.masurca_genomesize \\
+        -p ${task.cpus}
+
+        masurca masurca_config.txt
+
+        ./assemble.sh
+
+        mv CA.mr*/final.genome.scf.fasta final.genome.scf.fasta
+        """
+    }
+
+    // Quast for masurca pipeline
+    process quast_masurca {
+        publishDir "${params.outdir}", mode: 'copy'
+
+        input:
+        file scaffolds from assembly_results_scaffolds
+
+        output:
+        file "*" into quast_results
+
+        script:
+        """
+        quast $scaffolds
+        """
+    }
 
 }
-
-/**
- * STEP 3.1 QUAST assembly QC
- */
-//process quast {
-//    publishDir "${params.outdir}", mode: 'copy'
-//
-//    input:
-//    if (params.assembler == "spades"){
-//        file scaffolds from assembly_results_scaffolds
-//        file contigs from assembly_results_contigs
-//    }
-//    if (params.assembler == "canu"){
-//        file scaffolds from assembly_results_scaffolds
-//    }
-//
-//
-//    output:
-//    file "*" into quast_results
-//
-//    script:
-//    if (params.assembler == "spades")
-//        """
-//        quast $contigs $scaffolds
-//        """
-//    if (params.assembler == "canu")
-//        """
-//        quast --scaffolds $scaffolds
-//        """
-//}
 
 /**
  * STEP 3.2 BUSCO assembly QC
