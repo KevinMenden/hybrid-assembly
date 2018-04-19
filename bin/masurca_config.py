@@ -32,6 +32,10 @@ linking_mates = "1"
 if args.high_cov:
     linking_mates == "0"
 
+close_gaps = "0"
+if args.close_gaps:
+    close_gaps = "1"
+
 jf_size = str(10 * int(args.genome_size))
 
 isize = args.isize
@@ -39,7 +43,7 @@ stdev = args.stdev
 sr1 = args.sr1
 sr2 = args.sr2
 cores = args.p
-close_gaps = args.close_gaps
+args.close_gaps
 
 masurca_config = """
 DATA
