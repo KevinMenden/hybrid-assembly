@@ -411,12 +411,6 @@ if (params.assembler == 'masurca') {
 
 }
 
-/**
- * STEP 3.2 BUSCO assembly QC
- * !! CURRENTLY NOT IMPLEMENTED BECAUSE OF BUSCO LINEAGE DEPENDENCY !!
- */
-
-
 
 /*
  * Step 3 MultiQC

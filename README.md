@@ -10,9 +10,18 @@
 https://img.shields.io/badge/singularity-available-7E4C74.svg)
 
 ### Introduction
-hybrid-assembly: Pipeline for hybrid assembly using short and long reads.
+The hybrid-assembly pipeline contains workflows for de-novo genome assembly using both short and long reads.
 The pipeline is built using [Nextflow](https://www.nextflow.io), a workflow tool to run tasks across multiple compute infrastructures in a very portable manner. It comes with docker / singularity containers making installation trivial and results highly reproducible.
 
+The current workflow consists of:
+1. Quality control of input reads
+2. Assembly
+3. Assesment of assembly quality
+
+For the assembly step, three different assembler are currently implemented:
+* [SPAdes](http://cab.spbu.ru/software/spades/)
+* [Canu](https://github.com/marbl/canu)
+* [MaSuRCA](https://github.com/alekseyzimin/masurca)
 
 
 ### Documentation
