@@ -82,8 +82,11 @@ Use this flag to indicate the path to your gzipped fastq files containing the lo
 ```
 
 ### `--assembler`
-You can choose between two different assemblers: [SPAdes](http://cab.spbu.ru/software/spades/) and [Canu](https://github.com/marbl/canu).
-This flag is set to 'spades' by default. If you want to use the Canu assembler instead, you will have to specificy the genome size as well.
+You can choose between three different assemblers: [SPAdes](http://cab.spbu.ru/software/spades/), [Canu](https://github.com/marbl/canu)
+and [MaSuRCA](https://github.com/alekseyzimin/masurca). 
+This flag is set to 'spades' by default.
+If you want to use Canu (`--assembler canu`) or MaSuRCA (`--assembler masurca`) you have to specify the genome size. For Canu you have
+to use the `--genomeSize` flag, for MaSuRCA the `--masurca_genomesize` flag (genome size in bp)
 
 ```bash
 --assembler canu --genomeSize 4.6m
@@ -139,6 +142,14 @@ Each step in the pipeline has a default set of requirements for number of CPUs, 
 Wherever process-specific requirements are set in the pipeline, the default value can be changed by creating a custom config file. See the files in [`conf`](../conf) for examples.
 
 ## Other command line parameters
+
+### `--genomeSize`
+### `--masurca_genomesize`
+### `--insert_size`
+### `--insert_stdv`
+### `--mem_spades`
+
+
 ### `--outdir`
 The output directory where the results will be saved.
 
