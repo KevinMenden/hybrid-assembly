@@ -15,6 +15,7 @@ dependencies:
   - coreutils=8.25=1
   - fastqc=0.11.7=pl5.22.0_0
   - hmmer=3.1b2=3
+  - links=1.8.4=0
   - minimap2=2.9=1
   - mmtf-python=1.0.2=py27_0
   - multiqc=1.5=py27_0
@@ -53,7 +54,7 @@ dependencies:
   - backports_abc=0.5=py27h7b3c97b_0
   - bzip2=1.0.6=h9a117a8_4
   - ca-certificates=2018.03.07=0
-  - certifi=2018.1.18=py27_0
+  - certifi=2018.4.16=py27_0
   - cffi=1.11.5=py27h9745a5d_0
   - chardet=3.0.4=py27hfa10054_1
   - click=6.7=py27h4225b90_0
