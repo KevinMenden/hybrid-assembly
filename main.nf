@@ -97,7 +97,7 @@ Channel
 Channel
         .fromPath( params.longReads )
         .ifEmpty { exit 1, "Cannot find any long reads matching: ${params.reads}\nNB: Path needs to be enclosed in quotes!" }
-        .into { long_reads_qc; long_reads_assembly }
+        .into { long_reads_qc; long_reads_assembly; long_reads_scaffolding }
 
 
 
@@ -392,6 +392,28 @@ if (params.assembler == 'masurca') {
         mv CA.mr*/final.genome.scf.fasta final.genome.scf.fasta
         """
     }
+
+
+    // NOTE: Implementation works, but LINKS always exits with 'exit' command, giving an exit status
+    // which brings Nextflow to stop the pipeline ...
+//    // Additional scaffolding with LINKS
+//    process links_masurca {
+//        publishDir "${params.outdir}/links", mode: 'copy'
+//
+//        input:
+//        file scaffolds from scaffolds_links
+//        file long_reads from long_reads_scaffolding
+//
+//        output:
+//        file "*.fa" into assembly_results_scaffolds
+//
+//        script:
+//        """
+//        gunzip $long_reads -c > long_reads_scaffolding.fastq
+//        echo long_reads_scaffolding.fastq > links_input.txt
+//        LINKS -f $scaffolds -s links_input.txt -x 1 -b ${scaffolds.baseName}.links 2>>err.log
+//        """
+//    }
 
     // Quast for masurca pipeline
     process quast_masurca {
