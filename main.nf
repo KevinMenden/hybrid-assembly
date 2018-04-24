@@ -199,9 +199,10 @@ process nanoqc {
     file "*" into nanoqc_results
 
     script:
+    ftype = (lreads.extension == "fasta" || lreads.extension == "fa") ? "--fasta" : "--fastq"
     """
     source activate nanoqc-env
-    NanoPlot --fastq $lreads
+    NanoPlot $ftype $lreads
     """
 }
 
@@ -289,7 +290,7 @@ if (params.assembler == 'canu') {
         script:
         """
         canu \\
-        -p test genomeSize=$params.genomeSize -nanopore-raw $lreads gnuplotTested=true \\
+        -p ${lreads.baseName} genomeSize=$params.genomeSize -nanopore-raw $lreads gnuplotTested=true \\
         correctedErrorRate=$params.correctedErrorRate \\
         rawErrorRate=$params.rawErrorRate \\
         minReadLength=$params.minReadLength \\
