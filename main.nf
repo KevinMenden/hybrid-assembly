@@ -392,7 +392,7 @@ if (params.assembler == 'masurca') {
         mv CA.mr*/final.genome.scf.fasta final.genome.scf.fasta
         """
     }
-    
+
 
     // Quast for masurca pipeline
     process quast_masurca {

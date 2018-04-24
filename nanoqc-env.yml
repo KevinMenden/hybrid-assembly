@@ -10,7 +10,7 @@ dependencies:
   - htslib=1.7=0
   - mmtf-python=1.0.2=py35_0
   - nanoget=1.5.0=py35_0
-  - nanomath=0.20.0=py35_0
+  - nanomath=0.21.0=py35_0
   - nanoplot=1.11.0=py35_0
   - nanoplotter=0.35.4=py35_0
   - nanoqc=0.7.0=py35_0
@@ -21,7 +21,7 @@ dependencies:
   - bokeh=0.12.15=py35_0
   - bzip2=1.0.6=h9a117a8_4
   - ca-certificates=2018.03.07=0
-  - certifi=2018.1.18=py35_0
+  - certifi=2018.4.16=py35_0
   - curl=7.59.0=h84994c4_0
   - cycler=0.10.0=py35hc4d5149_0
   - dbus=1.13.2=hc3f9b76_0
@@ -85,4 +85,3 @@ dependencies:
   - xz=5.2.3=h55aa19d_2
   - yaml=0.1.7=had09818_2
   - zlib=1.2.11=ha838bed_2
-
