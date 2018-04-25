@@ -379,6 +379,7 @@ if (params.assembler == 'masurca') {
 
         script:
         """
+        sed -i.bck 's/cnsReuseUnitigs=1" > runCA.spec/cnsReuseUnitigs=1\ndoFragmentCorrection=0" > runCA.spec/' /opt/MaSuRCA-3.2.4/bin/mega_reads_assemble_*.sh
         masurca_config.py \\
         --sr1 ${sreads[0]} --sr2 ${sreads[1]} \\
         --isize $params.insert_size --stdev $params.insert_stdv \\
