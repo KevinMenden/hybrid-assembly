@@ -88,8 +88,13 @@ This flag is set to 'spades' by default.
 If you want to use Canu (`--assembler canu`) or MaSuRCA (`--assembler masurca`) you have to specify the genome size. For Canu you have
 to use the `--genomeSize` flag, for MaSuRCA the `--masurca_genomesize` flag (genome size in bp)
 
+Canu example:
 ```bash
 --assembler canu --genomeSize 4.6m
+```
+MaSuRCA example:
+```bash
+--assembler masurca --masurca_genomesize 4600000
 ```
 
 ## Reference Genomes
