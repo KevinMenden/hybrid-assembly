@@ -56,10 +56,16 @@ reads using more accurate short reads.
 
 **Output directory: `results/pilon`**
 
+## MaSuRCA
+[MaSuRCA](https://github.com/alekseyzimin/masurca) uses superreads and megareads to integrate short and long reads
+for de novo assembly.
+
+**Output direcetory: `results/masurca`**
+
 ## QUAST
 [QUAST](http://quast.sourceforge.net/quast) is a tool for assessing quality statistics of genome assemblies.
 
-**Output directory: `results/quast`**
+**Output directory: `results/quast_results`**
 
 ## MultiQC
 [MultiQC](http://multiqc.info) is a visualisation tool that generates a single HTML report summarising all samples in your project. Most of the pipeline QC results are visualised in the report and further statistics are available in within the report data directory.
