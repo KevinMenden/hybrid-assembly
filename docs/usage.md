@@ -153,6 +153,7 @@ Wherever process-specific requirements are set in the pipeline, the default valu
 ### `--insert_size`
 ### `--insert_stdv`
 ### `--mem_spades`
+### `--kmers`
 
 
 ### `--outdir`

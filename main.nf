@@ -235,8 +235,13 @@ if (params.assembler == 'spades') {
         script:
         ref_genome = params.fasta ? "--trusted-contigs $fasta" : ''
         lr = (params.lr_type == 'nanopore') ? '--nanopore' : '--pacbio'
+        kmers = params.kmers
         """
-        spades.py -o "spades_results" -t ${task.cpus} -m $params.mem_spades -1 ${sreads[0]} -2 ${sreads[1]} $lr $lreads $ref_genome
+        spades.py -o "spades_results" -t ${task.cpus} \\
+        -m $params.mem_spades \\
+        -1 ${sreads[0]} -2 ${sreads[1]} \\
+        $lr $lreads $ref_genome \\
+        -k $kmers
         mv spades_results/scaffolds.fasta scaffolds.fasta
         mv spades_results/contigs.fasta contigs.fasta
         """
