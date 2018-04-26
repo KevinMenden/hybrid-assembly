@@ -35,3 +35,6 @@ RUN apt-get update && apt-get install -y g++ libboost-all-dev zlib1g-dev libbz2-
 RUN curl -fsSL https://github.com/alekseyzimin/masurca/files/1668918/MaSuRCA-3.2.4.tar.gz -o /opt/MaSuRCA-3.2.4.tar.gz
 RUN cd /opt/; tar -xzvf MaSuRCA-3.2.4.tar.gz; cd MaSuRCA-3.2.4; ./install.sh
 ENV PATH $PATH:/opt/MaSuRCA-3.2.4/bin
+
+# For testing
+RUN sed -i.bck 's/cnsReuseUnitigs=1" > runCA.spec/cnsReuseUnitigs=1\ndoFragmentCorrection=0" > runCA.spec/' /opt/MaSuRCA-3.2.4/bin/mega_reads_assemble_*.sh
