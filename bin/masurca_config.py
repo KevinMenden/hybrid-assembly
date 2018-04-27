@@ -28,9 +28,9 @@ elif args.lr_type == 'pacbio':
 else:
     print("Invalid long read type specification in masurca_config.py. Use either 'nanopore' or 'pacbio' for the --lr_type flag.")
 
-linking_mates = "1"
+linking_mates = "0"
 if args.high_cov:
-    linking_mates == "0"
+    linking_mates == "1"
 
 close_gaps = "0"
 if args.close_gaps:

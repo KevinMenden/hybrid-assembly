@@ -384,13 +384,14 @@ if (params.assembler == 'masurca') {
 
         script:
         cg = params.close_gaps ? "--close_gaps" : ""
+        hc = params.high_cov ? "--high_cov" : ""
         """
         masurca_config.py \\
         --sr1 ${sreads[0]} --sr2 ${sreads[1]} \\
         --isize $params.insert_size --stdev $params.insert_stdv \\
         --lr $lreads --lr_type $params.lr_type \\
         --genome_size $params.masurca_genomesize \\
-        $cg -p ${task.cpus}
+        $cg $hc -p ${task.cpus}
 
         masurca masurca_config.txt
 
