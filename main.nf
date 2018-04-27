@@ -383,13 +383,14 @@ if (params.assembler == 'masurca') {
         file "final.genome.scf.fasta" into assembly_results_scaffolds
 
         script:
+        cg = params.close_gaps ? "--close_gaps" : ""
         """
         masurca_config.py \\
         --sr1 ${sreads[0]} --sr2 ${sreads[1]} \\
         --isize $params.insert_size --stdev $params.insert_stdv \\
         --lr $lreads --lr_type $params.lr_type \\
         --genome_size $params.masurca_genomesize \\
-        -p ${task.cpus}
+        $cg -p ${task.cpus}
 
         masurca masurca_config.txt
 
