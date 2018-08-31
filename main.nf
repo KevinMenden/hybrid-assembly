@@ -35,6 +35,7 @@ def helpMessage() {
 
     Options:
       --lr_type                     Long read technology. One of 'nanopore' | 'pacbio' . Default: 'nanopore'
+      --cont                        What container tech to use. Set to 'docker' if you use docker.
 
     Other options:
       --outdir                      The output directory where the results will be saved
@@ -63,6 +64,7 @@ params.email = false
 params.plaintext_email = false
 params.assembler = "spades"
 params.genomeSize = 0
+params.cont = 'singularity'
 
 multiqc_config = file(params.multiqc_config)
 
@@ -187,8 +189,10 @@ process fastqc {
 
 /**
  * STEP 1.2 QC for long reads
+ * Only executed if docker is used
  */
-process nanoqc {
+ if (params.cont == 'docker') {
+    process nanoqc {
     tag "${lreads.baseName}"
     publishDir "${params.outdir}/nanoqc", mode: 'copy'
 
@@ -204,6 +208,7 @@ process nanoqc {
     source activate nanoqc-env
     NanoPlot $ftype $lreads
     """
+    }
 }
 
 /**
