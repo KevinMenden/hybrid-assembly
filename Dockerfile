@@ -4,7 +4,7 @@ LABEL authors="kevin.menden@t-online.de" \
     description="Docker image containing all requirements for hybrid-assembly pipeline"
 
 # Create assembly-env
-COPY environment_reduced.yml /
+COPY environment.yml /
 RUN conda env create -f /environment.yml && conda clean -a
 ENV PATH /opt/conda/envs/assembly-env/bin:$PATH
 
