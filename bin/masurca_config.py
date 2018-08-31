@@ -9,14 +9,14 @@ import argparse
 parser = argparse.ArgumentParser()
 parser.add_argument("--sr1", help="Path to short reads 1")
 parser.add_argument("--sr2", help="Path to short reads 2")
-parser.add_argument("--isize", help="The mean insert size. Default: 180", default="180")
+parser.add_argument("--isize", help="The mean insert size. Default: 350", default="350")
 parser.add_argument("--stdev", help="The insert size standard deviation. Default: 20", default="20")
 parser.add_argument("--lr", help="Path to long reads")
 parser.add_argument("--lr_type", help="Type of long reads: nanopore | pacbio. Default: nanopore", default="nanopore")
 parser.add_argument("--high_cov", help="Set this flag if you have high coverage", default=False, action="store_true")
-parser.add_argument("--genome_size", help="The genome size in bp. Default: 2100000000", default=2100000000)
+parser.add_argument("--genome_size", help="The genome size in bp. Default: 2200000000", default=2200000000)
 parser.add_argument("-p", help="Cores to use", default=16)
-parser.add_argument("--close_gaps", help="Whether gaps should be closed. Default: False.", default=False, action="store_true")
+parser.add_argument("--close_gaps", help="Whether gaps should be closed. Default: True.", default=True, action="store_true")
 
 args = parser.parse_args()
 
