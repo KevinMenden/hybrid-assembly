@@ -5,7 +5,7 @@ LABEL authors="kevin.menden@t-online.de" \
 
 # Create assembly-env
 COPY environment_reduced.yml /
-RUN conda env create -f /environment_reduced.yml && conda clean -a
+RUN conda env create -f /environment.yml && conda clean -a
 ENV PATH /opt/conda/envs/assembly-env/bin:$PATH
 
 # Install MaSuRCA 3.2.8
