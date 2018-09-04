@@ -440,7 +440,7 @@ process quast_reference {
 
     script:
     """
-    quast $scaffolds -R fasta --split-scaffolds --large --eukaryote
+    quast -R fasta --split-scaffolds --large $scaffolds
     """
 }
 
