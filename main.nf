@@ -440,7 +440,7 @@ process quast_reference {
 
     script:
     """
-    quast -R fasta --split-scaffolds --large $scaffolds
+    quast -R fasta --threads ${task.cpus} --split-scaffolds --large $scaffolds
     """
 }
 
