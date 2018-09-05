@@ -19,3 +19,6 @@ ENV PATH /opt/conda/envs/assembly-env/bin:$PATH
 # Create NanoQC environment
 COPY nanoqc-env.yml /
 RUN conda env create -f /nanoqc-env.yml
+
+# Install PROCPS
+RUN apt-get update && apt-get install -y procps
