@@ -6,10 +6,12 @@ channels:
   - conda-forge
 dependencies:
   - blast=2.5.0=h3727419_3
-  - canu=1.7.1=pl526h470a237_0
+  - canu=1.4=1
   - circos=0.69.6=2
   - fastqc=0.11.6=2
   - glimmerhmm=3.0.4=h2d50403_2
+  - gnuplot=5.0.3=4
+  - java-jdk=8.0.92=1
   - libdeflate=1.0=h470a237_0
   - minimap2=2.12=ha92aebf_0
   - multiqc=1.6=py27h24bf2e0_0
@@ -47,27 +49,32 @@ dependencies:
   - perl-svg=2.64=pl526_2
   - perl-test-more=1.001002=pl526_1
   - perl-text-format=0.59=pl526_1
+  - perl-threaded=5.22.0=13
   - perl-time-hires=1.9758=pl526_0
   - perl-try-tiny=0.24=pl526_3
   - perl-xml-parser=2.44=pl526h3a4f0e9_6
   - perl-xsloader=0.24=pl526_0
   - pilon=1.22=1
   - quast=5.0.0=py27pl526ha92aebf_1
-  - samtools=1.9=h46bd0b3_0
+  - samtools=1.7=1
   - simplejson=3.8.1=py27_0
   - spades=3.12.0=1
+  - ca-certificates=2018.8.24=ha4d7672_0
   - cairo=1.14.10=0
+  - certifi=2018.8.24=py27_1
   - colormath=3.0.0=py_2
   - dbus=1.13.0=h3a4f0e9_0
   - freetype=2.8.1=hfa320df_1
   - glib=2.55.0=h464dc38_2
-  - gnuplot=5.2.3=0
   - gstreamer=1.12.5=h61a6719_0
   - harfbuzz=1.7.6=0
-  - libedit=3.1.20170329=0
+  - libedit=3.1.20170329=haf1bffa_1
+  - libgcc=7.2.0=h69d50b8_2
   - libgd=2.2.5=3
   - libwebp=0.5.2=7
   - lzstring=1.0.3=py27_0
+  - ncurses=6.1=hfc679d8_1
+  - openssl=1.0.2p=h470a237_0
   - spectra=0.0.11=py_0
   - asn1crypto=0.24.0=py27_0
   - backports=1.0=py27_1
@@ -76,8 +83,6 @@ dependencies:
   - blas=1.0=mkl
   - boost=1.67.0=py27_4
   - bzip2=1.0.6=h14c3975_5
-  - ca-certificates=2018.03.07=0
-  - certifi=2018.8.24=py27_1
   - cffi=1.11.5=py27he75722e_1
   - chardet=3.0.4=py27_1
   - click=6.7=py27_0
@@ -122,12 +127,10 @@ dependencies:
   - mkl=2018.0.3=1
   - mkl_fft=1.0.4=py27h4414c95_1
   - mkl_random=1.0.1=py27h4414c95_1
-  - ncurses=5.9=10
   - networkx=2.0=py27hfc23926_0
   - numpy=1.15.1=py27h1d66e8a_0
   - numpy-base=1.15.1=py27h81de0dd_0
   - openjdk=8.0.121=1
-  - openssl=1.0.2p=h14c3975_0
   - pango=1.40.11=h8191d47_0
   - pcre=8.42=h439df22_0
   - perl=5.26.2=h14c3975_0
