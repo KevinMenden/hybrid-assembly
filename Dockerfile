@@ -7,7 +7,7 @@ LABEL authors="kevin.menden@t-online.de" \
 RUN apt-get update && apt-get install -y g++ libboost-all-dev zlib1g-dev libbz2-dev make
 RUN curl -fsSL https://github.com/alekseyzimin/masurca/raw/master/MaSuRCA-3.2.9.tar.gz -o /opt/MaSuRCA-3.2.9.tar.gz
 RUN cd /opt/; tar -xzvf MaSuRCA-3.2.9.tar.gz; cd MaSuRCA-3.2.9; ./install.sh
-ENV PATH $PATH:/opt/MaSuRCA-3.2.8/bin
+ENV PATH $PATH:/opt/MaSuRCA-3.2.9/bin
 
 
 # Create assembly-env
