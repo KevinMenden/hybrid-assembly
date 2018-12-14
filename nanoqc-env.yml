@@ -7,16 +7,16 @@ channels:
 dependencies:
   - bcftools=1.9=h4da6232_0
   - biopython=1.68=py35_0
-  - htslib=1.7=0
+  - htslib=1.9=hc238db4_4
   - libdeflate=1.0=h470a237_0
   - mmtf-python=1.0.2=py35_0
-  - nanoget=1.5.2=py35_0
-  - nanomath=0.21.0=py35_2
-  - nanoplot=1.13.0=py35_1
-  - nanoplotter=0.39.1=py35_2
+  - nanoget=1.7.6=py35_0
+  - nanomath=0.22.0=py35_0
+  - nanoplot=1.19.0=py35_0
+  - nanoplotter=1.1.1=py35_0
   - pauvre=0.1.86=py_1
-  - pysam=0.14.1=py35hae42fb6_1
-  - samtools=1.7=1
+  - pysam=0.15.1=py35h0380709_0
+  - samtools=1.9=h8ee4bcc_1
   - asn1crypto=0.24.0=py35_0
   - blas=1.0=mkl
   - bzip2=1.0.6=h14c3975_5
@@ -37,7 +37,7 @@ dependencies:
   - gstreamer=1.14.0=hb453b48_1
   - icu=58.2=h9c2bf20_1
   - idna=2.7=py35_0
-  - intel-openmp=2018.0.3=0
+  - intel-openmp=2019.1=144
   - ipython_genutils=0.2.0=py35hc9e07d0_0
   - jpeg=9b=h024ee3a_2
   - jsonschema=2.6.0=py35h4395190_0
@@ -46,37 +46,36 @@ dependencies:
   - libcurl=7.61.0=h1ad7b7a_0
   - libedit=3.1.20170329=h6b74fdf_2
   - libffi=3.2.1=hd88cf55_4
-  - libgcc=7.2.0=h69d50b8_2
   - libgcc-ng=8.2.0=hdf63c60_1
   - libgfortran-ng=7.3.0=hdf63c60_0
-  - libpng=1.6.34=hb9fc6fc_0
+  - libpng=1.6.35=hbc83047_0
   - libssh2=1.8.0=h9cfc8f7_4
   - libstdcxx-ng=8.2.0=hdf63c60_1
   - libtiff=4.0.9=he85c1e1_2
   - libuuid=1.0.3=h1bed415_2
   - libxcb=1.13=h1bed415_1
   - libxml2=2.9.8=h26e45fe_1
-  - matplotlib=2.2.3=py35hb69df0a_0
+  - matplotlib=3.0.0=py35h5429711_0
   - mkl=2018.0.3=1
-  - mkl_fft=1.0.4=py35h4414c95_1
+  - mkl_fft=1.0.6=py35h7dd41cf_0
   - mkl_random=1.0.1=py35h4414c95_1
   - msgpack-python=0.5.6=py35h6bb024c_1
   - nbformat=4.4.0=py35h12e6e07_0
-  - ncurses=6.1=hf484d3e_0
-  - numpy=1.15.1=py35h1d66e8a_0
-  - numpy-base=1.15.1=py35h81de0dd_0
-  - olefile=0.45.1=py35_0
+  - ncurses=6.1=he6710b0_1
+  - numpy=1.15.2=py35h1d66e8a_0
+  - numpy-base=1.15.2=py35h81de0dd_0
+  - olefile=0.46=py35_0
   - openssl=1.0.2p=h14c3975_0
   - pandas=0.23.4=py35h04863e7_0
   - patsy=0.5.0=py35_0
   - pcre=8.42=h439df22_0
   - pillow=5.2.0=py35heded4f4_0
   - pip=10.0.1=py35_0
-  - plotly=3.1.1=py35h28b3542_0
-  - pycparser=2.18=py35_1
+  - plotly=3.2.1=py35h28b3542_0
+  - pycparser=2.19=py35_0
   - pyopenssl=18.0.0=py35_0
-  - pyparsing=2.2.0=py35_1
-  - pyqt=5.9.2=py35h22d08a2_1
+  - pyparsing=2.2.1=py35_0
+  - pyqt=5.9.2=py35h05f1152_2
   - pysocks=1.6.8=py35_0
   - python=3.5.6=hc3d631a_0
   - python-dateutil=2.7.3=py35_0
@@ -89,18 +88,17 @@ dependencies:
   - scipy=1.1.0=py35hfa4b5c9_1
   - seaborn=0.9.0=py35_0
   - setuptools=40.2.0=py35_0
-  - sip=4.19.12=py35he6710b0_0
+  - sip=4.19.8=py35hf484d3e_0
   - six=1.11.0=py35_1
-  - sqlite=3.24.0=h84994c4_0
+  - sqlite=3.25.3=h7b6447c_0
   - statsmodels=0.9.0=py35h3010b51_0
   - tk=8.6.8=hbc83047_0
-  - tornado=5.1=py35h14c3975_0
+  - tornado=5.1.1=py35h7b6447c_0
   - traitlets=4.3.2=py35ha522a97_0
   - urllib3=1.23=py35_0
   - wheel=0.31.1=py35_0
   - xz=5.2.4=h14c3975_4
-  - zlib=1.2.11=ha838bed_2
+  - zlib=1.2.11=h7b6447c_3
   - pip:
     - msgpack==0.5.6
-prefix: /home/kevin/anaconda3/envs/nanoqc-env
 
