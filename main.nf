@@ -425,24 +425,7 @@ if (params.assembler == 'masurca') {
 
 }
 
-/*
- * Run Quast with reference genome if that is available
- */
-process quast_reference {
-    publishDir "${params.outdir/quast_reference}", mode: 'copy'
 
-    input:
-    file scaffolds from assembly_results_scaffolds
-    file fasta from fasta
-
-    output:
-    file "*" into quast_results_reference
-
-    script:
-    """
-    quast -R fasta --threads ${task.cpus} --split-scaffolds --large $scaffolds
-    """
-}
 
 /*
  * Step 3 MultiQC
